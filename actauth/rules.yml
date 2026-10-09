@@ -1,0 +1,14 @@
+# decision: allow — posting to an internal Slack channel is visible to
+# whoever's in it, but unlike lp-x-poster's own x_create_post/x_reply,
+# it's not public, permanent, or attributed under some external
+# account's own name; a message can be deleted, and the audience is
+# whoever the operator already invited into that channel. Tighten this
+# to ask for a deployment where the configured channel is itself
+# sensitive (a customer-facing or wide-audience channel, say) — the
+# right call depends entirely on which channel SLACK_DEFAULT_CHANNEL
+# actually points at, which this ability has no way to judge on its
+# own.
+- name: post-to-slack-allowed
+  scope: "*/*"
+  tool: post_to_slack
+  decision: allow
