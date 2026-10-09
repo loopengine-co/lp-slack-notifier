@@ -1,3 +1,4 @@
+import { agentScopedEnvVarName, inferAgentNameFromToolUrl } from 'loopengine'
 import type { ToolDefinition } from 'loopengine'
 
 // Slack's own chat.postMessage always answers HTTP 200, success or
@@ -12,6 +13,16 @@ function requireEnv(name: string, action: string): string {
   return value
 }
 
+// Resolved once at module load, same as lp-task-scheduler's own
+// inferAgentName — there's exactly one .env/process.env for the whole
+// project (see loopengine's own env-admin.ts), so two agents both
+// installing this ability and relying on the bare SLACK_DEFAULT_CHANNEL
+// would otherwise always post to the same channel. undefined when this
+// file isn't actually at the expected agents/<name>/tools/ depth (a
+// test harness loading it from elsewhere) — the fallback chain below
+// just skips the per-agent override entirely in that case.
+const AGENT_NAME = inferAgentNameFromToolUrl(import.meta.url)
+
 export const postToSlack: ToolDefinition = {
   name: 'post_to_slack',
   description:
@@ -25,7 +36,7 @@ export const postToSlack: ToolDefinition = {
       },
       channel: {
         type: 'string',
-        description: 'Optional — a channel ID (e.g. "C0123ABC456") or name (e.g. "#general") to post to instead of SLACK_DEFAULT_CHANNEL. The bot must already be a member of whichever channel this resolves to.',
+        description: 'Optional — a channel ID (e.g. "C0123ABC456") or name (e.g. "#general") to post to instead of this agent\'s own default channel (its own <AGENT_NAME>_SLACK_DEFAULT_CHANNEL override if set, else the shared SLACK_DEFAULT_CHANNEL). The bot must already be a member of whichever channel this resolves to.',
       },
     },
     required: ['text'],
@@ -35,8 +46,13 @@ export const postToSlack: ToolDefinition = {
     if (!text) throw new Error('post_to_slack: text is required')
 
     const token = requireEnv('SLACK_BOT_TOKEN', 'post_to_slack')
-    const channel = typeof input.channel === 'string' && input.channel ? input.channel : process.env.SLACK_DEFAULT_CHANNEL
-    if (!channel) throw new Error('post_to_slack: no channel given, and SLACK_DEFAULT_CHANNEL is not set')
+    const scopedChannel = AGENT_NAME ? process.env[agentScopedEnvVarName(AGENT_NAME, 'SLACK_DEFAULT_CHANNEL')] : undefined
+    const channel = (typeof input.channel === 'string' && input.channel ? input.channel : undefined) ?? scopedChannel ?? process.env.SLACK_DEFAULT_CHANNEL
+    if (!channel) {
+      throw new Error(
+        `post_to_slack: no channel given, and neither ${AGENT_NAME ? `${agentScopedEnvVarName(AGENT_NAME, 'SLACK_DEFAULT_CHANNEL')} nor ` : ''}SLACK_DEFAULT_CHANNEL is set`,
+      )
+    }
 
     const res = await fetch('https://slack.com/api/chat.postMessage', {
       method: 'POST',

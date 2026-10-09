@@ -1,10 +1,10 @@
 {
-  "loopengineVersion": "^0.1.24",
+  "loopengineVersion": "^0.1.60",
   "tools": ["tools/post_to_slack.ts"],
   "skills": ["skills/slack-notifying"],
   "actauth": "actauth/rules.yml",
   "env": [
     { "name": "SLACK_BOT_TOKEN", "description": "A Slack bot token (starts \"xoxb-\") with the chat:write scope — from a Slack app's own \"OAuth & Permissions\" page, installed to your workspace. The same bot token already used for a durable Slack approval notifier (core/http-notify-triggers/slack.ts), if one is already configured, works here too — same scope, same app.", "secret": true },
-    { "name": "SLACK_DEFAULT_CHANNEL", "description": "A channel ID (e.g. \"C0123ABC456\") or name (e.g. \"#general\") to post to when a call doesn't specify one explicitly. The bot must already be a member of this channel — invite it with /invite @<bot-name> in Slack first, or every call targeting this default fails.", "secret": false }
+    { "name": "SLACK_DEFAULT_CHANNEL", "description": "A channel ID (e.g. \"C0123ABC456\") or name (e.g. \"#general\") to post to when a call doesn't specify one explicitly. The bot must already be a member of this channel — invite it with /invite @<bot-name> in Slack first, or every call targeting this default fails. If this ability is installed under more than one agent and they should post to different default channels, set <AGENT_NAME>_SLACK_DEFAULT_CHANNEL instead (e.g. SUPPORT_SLACK_DEFAULT_CHANNEL for an agent named 'support') — that agent's own copy of post_to_slack checks its own override first and only falls back to this shared value when its override isn't set.", "secret": false, "perAgent": true }
   ]
 }
