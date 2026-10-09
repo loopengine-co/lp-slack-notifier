@@ -43,9 +43,8 @@ own job (see HUMAN_IN_THE_LOOP.md), not this tool.
 
 ## Channel defaults and failures
 
-Omit `channel` to use this agent's own default — its own
-`<AGENT_NAME>_SLACK_DEFAULT_CHANNEL` override if one is set for it,
-else the shared `SLACK_DEFAULT_CHANNEL` — and pass one explicitly only
+Omit `channel` to use this agent's own default channel
+(`SLACK_DEFAULT_CHANNEL`) — and pass one explicitly only
 when a specific call genuinely belongs somewhere else. A failure here
 almost always means one of two things — report the real reason back,
 not just "it failed": the bot's own token lacks `chat:write` scope, or

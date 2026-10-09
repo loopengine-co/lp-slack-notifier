@@ -37,24 +37,20 @@ repo's own `SlackNotifier`/`SlackChatApprover`), the *same* bot token
 works here too — same scope requirement, same app, no second Slack app
 needed.
 
-- `SLACK_BOT_TOKEN` (secret).
+- `SLACK_BOT_TOKEN` (secret) — shared by default; any agent can set
+  its own to post as a different Slack app.
 - `SLACK_DEFAULT_CHANNEL` — a channel ID (`"C0123ABC456"`) or name
-  (`"#general"`) to post to when a call doesn't specify one.
+  (`"#general"`) to post to when a call doesn't specify one. Shared by
+  default; any agent can set its own.
 
-### Different default channel per agent
+### Per-agent settings
 
-Installed under more than one agent, and each one should default to a
-different channel? Set `<AGENT_NAME>_SLACK_DEFAULT_CHANNEL` (e.g.
-`SUPPORT_SLACK_DEFAULT_CHANNEL` for an agent named `support`,
-`SALES_SLACK_DEFAULT_CHANNEL` for one named `sales`) instead of — or
-alongside — the shared `SLACK_DEFAULT_CHANNEL`. Each agent's own
-installed copy of `post_to_slack` checks its own override first, and
-only falls back to the shared `SLACK_DEFAULT_CHANNEL` when its own
-isn't set — so agents that don't need a different channel can just
-leave it unset and keep using the shared one. The Admin UI's
-Environment tab shows this per-agent override as its own row, right
-alongside the shared default, for whichever agent's Environment tab
-you're viewing.
+Both settings have a shared row and a per-agent row in each agent's
+Environment tab in the Admin UI (per-agent values are stored in
+`agents/<name>/.env`). An agent that leaves its own unset uses the
+shared one. Overrides set the old way
+(`<AGENT_NAME>_SLACK_DEFAULT_CHANNEL`) still work until you replace
+them.
 
 **The bot must be invited into every channel it posts to** — Slack
 scopes a bot's own visibility to channels it's an explicit member of,
