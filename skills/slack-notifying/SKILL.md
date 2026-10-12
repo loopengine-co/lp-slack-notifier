@@ -11,8 +11,8 @@ expected to respond to it the way an approval request is, and nothing
 here waits for a reply. A common real use: searching for something
 (X posts, recent commits, whatever), deciding what's actually worth
 surfacing, and relaying a summary of it to a channel a human actually
-watches — especially from a scheduled, unattended routine (see
-lp-task-scheduler) where there's no live conversation for the summary
+watches — especially from a scheduled, unattended routine (a task
+from `system_schedule_task` or the console's Schedules tab) where there's no live conversation for the summary
 to land in otherwise.
 
 ## This is not the same thing as asking for approval

@@ -1,6 +1,6 @@
 {
   "name": "lp-slack-notifier",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A loopengine ability: a post_to_slack tool that sends a plain message to a Slack channel from a configured bot — relaying a summary, finding, or notification somewhere a human will see it, independent of actauth's own approval-notification mechanism — plus a skill on how to use it.",
   "license": "MIT",
   "keywords": ["loopengine", "loopengine-ability", "slack", "notification"],
